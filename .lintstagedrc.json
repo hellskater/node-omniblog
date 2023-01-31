@@ -1,5 +1,0 @@
-{
-  "src/**/*.(ts|js)": [
-    "npm run lint"
-  ]
-}
