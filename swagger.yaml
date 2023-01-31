@@ -100,11 +100,6 @@ paths:
         500:
           description: 'Server Error'
 
-tags:
-- name: Auth
-  description: Auth API
-
-  
 
 # definitions
 definitions:
