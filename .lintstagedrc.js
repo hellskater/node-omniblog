@@ -1,3 +1,3 @@
 module.exports = {
-  'src/**/*.(ts|js)': 'npm run lint-and-fix'
+  'src/**/*.(ts|js)': 'npm run lint-and-fix',
 };
