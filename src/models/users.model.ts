@@ -22,6 +22,22 @@ export const userSchema: Schema = new Schema({
   },
 });
 
+export const fileteredUserSchema: Schema = new Schema({
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  name: {
+    type: String,
+    required: true,
+  },
+  logo: {
+    type: String,
+    required: true,
+  },
+});
+
 userSchema.methods.toJSON = function () {
   const obj = this.toObject();
   delete obj.password;
