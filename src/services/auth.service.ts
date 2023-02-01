@@ -23,7 +23,7 @@ class AuthService {
     return createUserData.toJSON();
   }
 
-  public async login(userData: CreateUserDto): Promise<{ cookie: string; data: { user: User; 'access-token': string; 'refresh-token': string } }> {
+  public async login(userData: CreateUserDto): Promise<{ user: User; 'access-token': string; 'refresh-token': string }> {
     if (isEmpty(userData)) throw new HttpException(400, 'userData is empty');
 
     const findUser: User = await this.users.findOne({ email: userData.email });
@@ -33,15 +33,11 @@ class AuthService {
     if (!isPasswordMatching) throw new HttpException(409, 'Password is not matching');
 
     const tokenData = this.createTokens(findUser);
-    const cookie = this.createCookie(tokenData);
 
     return {
-      cookie,
-      data: {
-        user: findUser.toJSON(),
-        'access-token': tokenData['access-token'],
-        'refresh-token': tokenData['refresh-token'],
-      },
+      user: findUser.toJSON(),
+      'access-token': tokenData['access-token'],
+      'refresh-token': tokenData['refresh-token'],
     };
   }
 
@@ -54,20 +50,17 @@ class AuthService {
     return findUser.toJSON();
   }
 
-  public async refreshToken(refreshToken: string): Promise<{ cookie: string; data: { 'access-token': string } }> {
+  public async refreshToken(refreshToken: string): Promise<{ 'access-token': string; 'refresh-token': string }> {
     try {
       const decoded: DataStoredInToken = verify(refreshToken, REFRESH_SECRET_KEY) as DataStoredInToken;
       const user: User = await this.users.findById(decoded._id);
       if (!user) throw new HttpException(401, 'User not found');
 
       const tokenData = this.createTokens(user);
-      const cookie = this.createCookie(tokenData);
 
       return {
-        cookie,
-        data: {
-          'access-token': tokenData['access-token'],
-        },
+        'access-token': tokenData['access-token'],
+        'refresh-token': tokenData['refresh-token'],
       };
     } catch (error) {
       throw new HttpException(401, 'Refresh token is invalid or expired');
@@ -91,10 +84,6 @@ class AuthService {
       'access-token': sign(dataStoredInToken, secretKey, { expiresIn }),
       'refresh-token': sign(dataStoredInToken, refreshSecretKey, { expiresIn: '1m' }),
     };
-  }
-
-  public createCookie(tokenData: TokenData): string {
-    return `Authorization=${tokenData['access-token']}; HttpOnly; Max-Age=${tokenData.expiresIn}, RefreshAuthorization=${tokenData['refresh-token']}; HttpOnly; Max-Age=${tokenData.expiresIn};`;
   }
 }
 
