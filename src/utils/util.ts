@@ -17,8 +17,3 @@ export const isEmpty = (value: string | number | object): boolean => {
     return false;
   }
 };
-
-console.log('first');
-console.log('first');
-console.log('first');
-console.log('first');

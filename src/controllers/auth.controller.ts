@@ -12,6 +12,9 @@ class AuthController {
       const userData: CreateUserDto = req.body;
       const signUpUserData: User = await this.authService.signup(userData);
 
+      // remove password from response
+      delete signUpUserData.password;
+
       res.status(201).json({ data: signUpUserData, message: 'signup' });
     } catch (error) {
       next(error);
@@ -22,6 +25,9 @@ class AuthController {
     try {
       const userData: CreateUserDto = req.body;
       const { cookie, findUser } = await this.authService.login(userData);
+
+      // remove password from response
+      delete findUser.password;
 
       res.setHeader('Set-Cookie', [cookie]);
       res.status(200).json({ data: findUser, message: 'login' });
