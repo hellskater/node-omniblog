@@ -8,8 +8,8 @@ export interface DataStoredInToken {
 
 export interface TokenData {
   'access-token': string;
-  'access-token-expires-in': string;
-  'refresh-token-expires-in': string;
+  'access-token-expires-in': number;
+  'refresh-token-expires-in': number;
   'refresh-token': string;
 }
 

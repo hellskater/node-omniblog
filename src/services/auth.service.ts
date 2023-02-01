@@ -82,8 +82,8 @@ class AuthService {
     const dataStoredInToken = { _id: user._id };
     const secretKey: string = SECRET_KEY;
     const refreshSecretKey: string = REFRESH_SECRET_KEY;
-    const accessTokenExpiresIn = '1h';
-    const refreshTokenExpiresIn = '7d';
+    const accessTokenExpiresIn = 60 * 60 * 24; // 1 hour
+    const refreshTokenExpiresIn = 60 * 60 * 24 * 7; // 30 days
 
     return {
       'access-token-expires-in': accessTokenExpiresIn,
