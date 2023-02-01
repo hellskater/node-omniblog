@@ -23,7 +23,10 @@ class PostService {
     const author = await this.users.findOne({ _id: authorId });
     if (!author) throw new HttpException(409, "Author doesn't exist");
 
-    const createPostData: Post = await this.posts.create({ ...postData, author: authorId });
+    const createdAt = new Date();
+    const updatedAt = new Date();
+
+    const createPostData: Post = await this.posts.create({ ...postData, author, createdAt, updatedAt });
     return createPostData;
   }
 
