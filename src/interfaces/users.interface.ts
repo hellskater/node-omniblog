@@ -4,4 +4,5 @@ export interface User {
   password: string;
   name: string;
   logo: string;
+  toJSON: () => User;
 }

@@ -20,7 +20,7 @@ class AuthService {
     const hashedPassword = await hash(userData.password, 10);
     const createUserData: User = await this.users.create({ ...userData, password: hashedPassword });
 
-    return createUserData;
+    return createUserData.toJSON();
   }
 
   public async login(userData: CreateUserDto): Promise<{ cookie: string; data: { user: User; token: string } }> {
@@ -38,7 +38,7 @@ class AuthService {
     return {
       cookie,
       data: {
-        user: findUser,
+        user: findUser.toJSON(),
         token: tokenData.token,
       },
     };
@@ -50,7 +50,7 @@ class AuthService {
     const findUser: User = await this.users.findOne({ email: userData.email, password: userData.password });
     if (!findUser) throw new HttpException(409, `This email ${userData.email} was not found`);
 
-    return findUser;
+    return findUser.toJSON();
   }
 
   public createToken(user: User): TokenData {
