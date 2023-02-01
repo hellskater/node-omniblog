@@ -10,6 +10,15 @@ export const userSchema: Schema = new Schema({
   password: {
     type: String,
     required: true,
+    toJSON: false,
+  },
+  name: {
+    type: String,
+    required: true,
+  },
+  logo: {
+    type: String,
+    required: true,
   },
 });
 

@@ -35,9 +35,6 @@ class AuthService {
     const tokenData = this.createToken(findUser);
     const cookie = this.createCookie(tokenData);
 
-    // delete findUser.password;
-    delete findUser.password;
-
     return {
       cookie,
       data: {
