@@ -1,10 +1,10 @@
-import { User } from './users.interface';
+import { FilteredUser } from './users.interface';
 
 export interface Post {
   _id: string;
   title: string;
   content: string;
-  author: User;
+  author: FilteredUser;
   createdAt: Date;
   updatedAt: Date;
 }

@@ -6,3 +6,10 @@ export interface User {
   logo: string;
   toJSON: () => User;
 }
+
+export interface FilteredUser {
+  _id: string;
+  email: string;
+  name: string;
+  logo: string;
+}
