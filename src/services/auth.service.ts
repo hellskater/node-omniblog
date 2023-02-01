@@ -68,12 +68,12 @@ class AuthService {
     const dataStoredInToken = { _id: user._id };
     const secretKey: string = SECRET_KEY;
     const refreshSecretKey: string = REFRESH_SECRET_KEY;
-    const expiresIn = '30s';
+    const expiresIn = '1d';
 
     return {
       expiresIn,
       'access-token': sign(dataStoredInToken, secretKey, { expiresIn }),
-      'refresh-token': sign(dataStoredInToken, refreshSecretKey, { expiresIn: '1m' }),
+      'refresh-token': sign(dataStoredInToken, refreshSecretKey, { expiresIn: '7d' }),
     };
   }
 }
