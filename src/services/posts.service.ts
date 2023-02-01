@@ -17,10 +17,9 @@ class PostService {
   }
 
   // create a new post
-  public async createPost(postData: Post): Promise<Post> {
+  public async createPost(postData: Post, authorId: string): Promise<Post> {
     if (isEmpty(postData)) throw new HttpException(400, 'postData is empty');
 
-    const authorId = postData.author._id;
     const author = await this.users.findOne({ _id: authorId });
     if (!author) throw new HttpException(409, "Author doesn't exist");
 

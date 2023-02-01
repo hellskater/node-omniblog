@@ -1,8 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import postService from '@/services/posts.service';
 import { Post } from '@/interfaces/posts.interface';
-import { verify } from 'jsonwebtoken';
-import { DataStoredInToken } from '@/interfaces/auth.interface';
 import { getUserIdFromRequest } from '@/utils/util';
 
 class PostsController {
@@ -23,8 +21,8 @@ class PostsController {
       const postData: Post = req.body;
       //   Add author id to post data by extracting it from the jwt token in the request header Authorization
       const userId = getUserIdFromRequest(req);
-      postData.author._id = userId;
-      const createPostData: Post = await this.postsService.createPost(postData);
+
+      const createPostData: Post = await this.postsService.createPost(postData, userId);
 
       res.status(201).json({ data: createPostData, message: 'created' });
     } catch (error) {
