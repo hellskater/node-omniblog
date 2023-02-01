@@ -41,6 +41,19 @@ class AuthController {
       next(error);
     }
   };
+
+  public refreshToken = async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    try {
+      const RefreshAuthorization =
+        req.cookies['RefreshAuthorization'] || (req.header('RefreshAuthorization') ? req.header('RefreshAuthorization').split('Bearer ')[1] : null);
+      const { cookie, data } = await this.authService.refreshToken(RefreshAuthorization);
+
+      res.setHeader('Set-Cookie', [cookie]);
+      res.status(200).json({ data, message: 'refresh' });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export default AuthController;

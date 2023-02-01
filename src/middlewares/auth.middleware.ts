@@ -13,13 +13,21 @@ const authMiddleware = async (req: RequestWithUser, res: Response, next: NextFun
       const secretKey: string = SECRET_KEY;
       const verificationResponse = (await verify(Authorization, secretKey)) as DataStoredInToken;
       const userId = verificationResponse._id;
-      const findUser = await userModel.findById(userId);
 
-      if (findUser) {
-        req.user = findUser;
-        next();
+      const expirationDate = verificationResponse.exp;
+      const currentDate = Math.floor(Date.now() / 1000);
+
+      if (expirationDate < currentDate) {
+        next(new HttpException(401, 'Token has expired'));
       } else {
-        next(new HttpException(401, 'Wrong authentication token'));
+        const findUser = await userModel.findById(userId);
+
+        if (findUser) {
+          req.user = findUser;
+          next();
+        } else {
+          next(new HttpException(401, 'Wrong authentication token'));
+        }
       }
     } else {
       next(new HttpException(404, 'Authentication token missing'));
