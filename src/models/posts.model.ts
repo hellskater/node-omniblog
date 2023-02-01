@@ -1,6 +1,6 @@
 import { Post } from '@/interfaces/posts.interface';
-import { User } from '@/interfaces/users.interface';
 import { model, Schema, Document } from 'mongoose';
+import { userSchema } from './users.model';
 
 const postSchema: Schema = new Schema({
   title: {
@@ -12,8 +12,7 @@ const postSchema: Schema = new Schema({
     required: true,
   },
   author: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
+    type: userSchema,
     required: true,
   },
   createdAt: {
