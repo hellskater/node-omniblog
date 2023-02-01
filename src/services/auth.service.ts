@@ -41,15 +41,6 @@ class AuthService {
     };
   }
 
-  public async logout(userData: User): Promise<User> {
-    if (isEmpty(userData)) throw new HttpException(400, 'userData is empty');
-
-    const findUser: User = await this.users.findOne({ email: userData.email, password: userData.password });
-    if (!findUser) throw new HttpException(409, `This email ${userData.email} was not found`);
-
-    return findUser.toJSON();
-  }
-
   public async refreshToken(refreshToken: string): Promise<{ 'access-token': string; 'refresh-token': string }> {
     try {
       const decoded: DataStoredInToken = verify(refreshToken, REFRESH_SECRET_KEY) as DataStoredInToken;
