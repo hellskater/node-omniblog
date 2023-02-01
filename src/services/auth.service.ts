@@ -23,7 +23,12 @@ class AuthService {
     return createUserData.toJSON();
   }
 
-  public async login(userData: CreateUserDto): Promise<{ user: User; 'access-token': string; 'refresh-token': string }> {
+  public async login(userData: CreateUserDto): Promise<{
+    user: User;
+    'access-token': string;
+    'refresh-token': string;
+    cookies: { 'access-token-cookie': string; 'refresh-token-cookie': string };
+  }> {
     if (isEmpty(userData)) throw new HttpException(400, 'userData is empty');
 
     const findUser: User = await this.users.findOne({ email: userData.email });
@@ -33,23 +38,29 @@ class AuthService {
     if (!isPasswordMatching) throw new HttpException(409, 'Password is not matching');
 
     const tokenData = this.createTokens(findUser);
+    const cookies = await this.createCookies(tokenData);
 
     return {
+      cookies,
       user: findUser.toJSON(),
       'access-token': tokenData['access-token'],
       'refresh-token': tokenData['refresh-token'],
     };
   }
 
-  public async refreshToken(refreshToken: string): Promise<{ 'access-token': string; 'refresh-token': string }> {
+  public async refreshToken(
+    refreshToken: string,
+  ): Promise<{ 'access-token': string; 'refresh-token': string; cookies: { 'access-token-cookie': string; 'refresh-token-cookie': string } }> {
     try {
       const decoded: DataStoredInToken = verify(refreshToken, REFRESH_SECRET_KEY) as DataStoredInToken;
       const user: User = await this.users.findById(decoded._id);
       if (!user) throw new HttpException(401, 'User not found');
 
       const tokenData = this.createTokens(user);
+      const cookies = await this.createCookies(tokenData);
 
       return {
+        cookies,
         'access-token': tokenData['access-token'],
         'refresh-token': tokenData['refresh-token'],
       };
@@ -58,22 +69,27 @@ class AuthService {
     }
   }
 
+  public async createCookies(tokenData: TokenData): Promise<{ 'access-token-cookie': string; 'refresh-token-cookie': string } | undefined> {
+    const cookies = {
+      'access-token-cookie': `Authorization=${tokenData['access-token']}; HttpOnly; Path=/; Max-Age=${tokenData['access-token-expires-in']}`,
+      'refresh-token-cookie': `RefreshAuthorization=${tokenData['refresh-token']}; HttpOnly; Path=/; Max-Age=${tokenData['refresh-token-expires-in']}`,
+    };
+
+    return cookies;
+  }
+
   public createTokens(user: User): TokenData {
-    // const dataStoredInToken = { _id: user._id };
-    // const secretKey: string = SECRET_KEY;
-    // const expiresIn: string = '1h';
-
-    // return { expiresIn, 'access-token': sign(dataStoredInToken, secretKey, { expiresIn }) };
-
     const dataStoredInToken = { _id: user._id };
     const secretKey: string = SECRET_KEY;
     const refreshSecretKey: string = REFRESH_SECRET_KEY;
-    const expiresIn = '1d';
+    const accessTokenExpiresIn = '1h';
+    const refreshTokenExpiresIn = '7d';
 
     return {
-      expiresIn,
-      'access-token': sign(dataStoredInToken, secretKey, { expiresIn }),
-      'refresh-token': sign(dataStoredInToken, refreshSecretKey, { expiresIn: '7d' }),
+      'access-token-expires-in': accessTokenExpiresIn,
+      'refresh-token-expires-in': refreshTokenExpiresIn,
+      'access-token': sign(dataStoredInToken, secretKey, { expiresIn: accessTokenExpiresIn }),
+      'refresh-token': sign(dataStoredInToken, refreshSecretKey, { expiresIn: refreshTokenExpiresIn }),
     };
   }
 }
