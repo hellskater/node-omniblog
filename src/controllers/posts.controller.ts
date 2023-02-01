@@ -3,6 +3,7 @@ import postService from '@/services/posts.service';
 import { Post } from '@/interfaces/posts.interface';
 import { verify } from 'jsonwebtoken';
 import { DataStoredInToken } from '@/interfaces/auth.interface';
+import { getUserIdFromRequest } from '@/utils/util';
 
 class PostsController {
   public postsService = new postService();
@@ -21,9 +22,8 @@ class PostsController {
     try {
       const postData: Post = req.body;
       //   Add author id to post data by extracting it from the jwt token in the request header Authorization
-      const token = req.headers.authorization.split(' ')[1];
-      const decodedToken = verify(token, process.env.JWT_SECRET) as DataStoredInToken;
-      postData.author._id = decodedToken._id;
+      const userId = getUserIdFromRequest(req);
+      postData.author._id = userId;
       const createPostData: Post = await this.postsService.createPost(postData);
 
       res.status(201).json({ data: createPostData, message: 'created' });
@@ -34,9 +34,8 @@ class PostsController {
 
   public findAllPostsByAuthor = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const token = req.headers.authorization.split(' ')[1];
-      const decodedToken = verify(token, process.env.JWT_SECRET) as DataStoredInToken;
-      const findAllPostsByAuthorData: Post[] = await this.postsService.findPostsByAuthor(decodedToken._id);
+      const userId = getUserIdFromRequest(req);
+      const findAllPostsByAuthorData: Post[] = await this.postsService.findPostsByAuthor(userId);
 
       res.status(200).json({ data: findAllPostsByAuthorData, message: 'findAll' });
     } catch (error) {

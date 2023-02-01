@@ -1,3 +1,8 @@
+import { SECRET_KEY } from '@/config';
+import { DataStoredInToken } from '@/interfaces/auth.interface';
+import { Request } from 'express';
+import { verify } from 'jsonwebtoken';
+
 /**
  * @method isEmpty
  * @param {String | Number | Object} value
@@ -16,4 +21,10 @@ export const isEmpty = (value: string | number | object): boolean => {
   } else {
     return false;
   }
+};
+
+export const getUserIdFromRequest = (req: Request): string => {
+  const Authorization = req.cookies['Authorization'] || (req.header('Authorization') ? req.header('Authorization').split('Bearer ')[1] : null);
+  const decoded = verify(Authorization, SECRET_KEY) as DataStoredInToken;
+  return decoded._id;
 };
