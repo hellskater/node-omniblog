@@ -23,8 +23,8 @@ class AuthController {
       const userData: CreateUserDto = req.body;
       const { cookies, ...data } = await this.authService.login(userData);
 
-      res.setHeader('Set-Cookie', cookies['access-token']);
-      res.setHeader('Set-Cookie', cookies['refresh-token']);
+      res.setHeader('Set-Cookie', cookies['access-token-cookie']);
+      res.setHeader('Set-Cookie', cookies['refresh-token-cookie']);
       res.status(200).json({ data, message: 'login' });
     } catch (error) {
       next(error);
@@ -37,8 +37,8 @@ class AuthController {
         req.cookies('RefreshAuthorization') || req.header('RefreshAuthorization') ? req.header('RefreshAuthorization').split('Bearer ')[1] : null;
       const { cookies, ...data } = await this.authService.refreshToken(RefreshAuthorization);
 
-      res.setHeader('Set-Cookie', cookies['access-token']);
-      res.setHeader('Set-Cookie', cookies['refresh-token']);
+      res.setHeader('Set-Cookie', cookies['access-token-cookie']);
+      res.setHeader('Set-Cookie', cookies['refresh-token-cookie']);
       res.status(200).json({ data, message: 'refresh' });
     } catch (error) {
       next(error);
