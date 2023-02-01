@@ -71,8 +71,8 @@ class AuthService {
 
   public async createCookies(tokenData: TokenData): Promise<{ 'access-token-cookie': string; 'refresh-token-cookie': string } | undefined> {
     const cookies = {
-      'access-token-cookie': `Authorization=${tokenData['access-token']}; Path=/; Max-Age=${tokenData['access-token-expires-in']}; SameSite=None;`,
-      'refresh-token-cookie': `RefreshAuthorization=${tokenData['refresh-token']}; Path=/; Max-Age=${tokenData['refresh-token-expires-in']}; SameSite=None;`,
+      'access-token-cookie': `Authorization=${tokenData['access-token']}; HttpOnly; Path=/; Max-Age=${tokenData['access-token-expires-in']}; SameSite=None;`,
+      'refresh-token-cookie': `RefreshAuthorization=${tokenData['refresh-token']}; HttpOnly; Path=/; Max-Age=${tokenData['refresh-token-expires-in']}; SameSite=None;`,
     };
 
     return cookies;
