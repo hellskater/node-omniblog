@@ -32,8 +32,7 @@ class AuthController {
 
   public refreshToken = async (req: RequestWithUser, res: Response, next: NextFunction) => {
     try {
-      const RefreshAuthorization =
-        req.cookies('RefreshAuthorization') || req.header('RefreshAuthorization') ? req.header('RefreshAuthorization').split('Bearer ')[1] : null;
+      const RefreshAuthorization = req.header('RefreshAuthorization') ? req.header('RefreshAuthorization').split('Bearer ')[1] : null;
       const { cookies, ...data } = await this.authService.refreshToken(RefreshAuthorization);
 
       res.setHeader('Set-Cookie', [cookies['access-token-cookie'], cookies['refresh-token-cookie']]);
